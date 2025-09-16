@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+<h2 align="center">My Profile</h2>
+<form method="POST">
+  <div class="form-group">
+    <label for="email">Email (cannot change)</label>
+    <input type="text" class="form-control" id="email" value="{{ user.email }}" readonly>
+  </div>
+  <div class="form-group">
+    <label for="firstName">First Name (cannot change)</label>
+    <input type="text" class="form-control" id="firstName" value="{{ user.first_name }}" readonly>
+  </div>
+  <div class="form-group">
+    <label for="bio">Bio</label>
+    <textarea class="form-control" id="bio" name="bio">{{ user.bio }}</textarea>
+  </div>
+<div class="form-group">
+    <label for="phone_number">Phone Number:</label>
+    <input 
+    type="text" 
+    name="phone_number" 
+    value="{{ current_user.phone_number }}" 
+    pattern="\d{10}" 
+    maxlength="10" 
+    title="Phone number must be exactly 10 digits" 
+    required
+>
+</div>
+  <br>
+  <button type="submit" class="btn btn-primary">Update</button>
+</form>
+{% endblock %}
