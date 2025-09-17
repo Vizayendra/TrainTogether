@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Messages{% endblock %}
+
+{% block content %}
+<h1>Messages</h1>
+
+<!-- Send Message Form -->
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <div>
+        {{ form.receiver.label }}<br>
+        {{ form.receiver(class="form-control") }}
+    </div>
+    <div style="margin-top:10px;">
+        {{ form.content.label }}<br>
+        {{ form.content(class="form-control", rows="3") }}
+    </div>
+    <div style="margin-top:10px;">
+        {{ form.submit(class="btn btn-primary") }}
+    </div>
+</form>
+
+<hr>
+
+<!-- Inbox -->
+<h2>Inbox</h2>
+{% if inbox %}
+    <ul>
+    {% for msg in inbox %}
+        <li><strong>From:</strong> {{ msg.sender.email }} - {{ msg.content }} <small>{{ msg.timestamp }}</small></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No messages yet.</p>
+{% endif %}
+
+<!-- Sent -->
+<h2>Sent</h2>
+{% if sent %}
+    <ul>
+    {% for msg in sent %}
+        <li><strong>To:</strong> {{ msg.receiver.email }} - {{ msg.content }} <small>{{ msg.timestamp }}</small></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>You haven’t sent any messages yet.</p>
+{% endif %}
+{% endblock %}
