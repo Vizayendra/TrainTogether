@@ -27,9 +27,18 @@ def profile():
     if request.method == 'POST':
         bio = request.form.get('bio')
         phone_number = request.form.get("phone_number")
+        activities = request.form.getlist('activities') 
+
+        # limited to 3 activities
+        if len(activities) > 3:
+            flash("You can only select up to 3 activities.", category="error")
+            return render_template("profile.html", user=current_user)
+
         current_user.bio = bio
         current_user.phone_number = phone_number
+        current_user.activity_types = ",".join(activities)
         db.session.commit()
         flash('Profile updated!', category='success')
+        return redirect("/profile")
 
     return render_template("profile.html", user=current_user)
