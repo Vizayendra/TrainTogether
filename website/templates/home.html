@@ -1,0 +1,80 @@
+<!-- In templates/home.html -->
+
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Section for Random Fact (This part stays the same) -->
+    <div class="section text-center">
+        <h2>Welcome back, {{ user.first_name }}!</h2>
+        <p class="lead text-muted">Here's a fun fact for you:</p>
+        <blockquote class="blockquote">
+            <p class="mb-0"><em>"{{ random_fact }}"</em></p>
+        </blockquote>
+    </div>
+
+    <!-- Section for Finding a Partner -->
+    <div class="section">
+        <h2 class="text-center mb-4">Find a Workout Partner</h2>
+        
+        <!-- =================== NEW DROPDOWN SEARCH FORM =================== -->
+        <div class="search-container mb-5 text-center">
+            <p class="lead">Select a workout to find other users.</p>
+            <form action="{{ url_for('views.search') }}" method="GET" class="form-inline justify-content-center">
+                <div class="form-group">
+                    <select name="workout_id" class="form-control mr-2" style="min-width: 200px;">
+                        <option value="">-- Select a Workout --</option>
+                        {% for workout in all_workouts %}
+                            <option value="{{ workout.id }}">{{ workout.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Find Partners</button>
+            </form>
+        </div>
+        <!-- =============================================================== -->
+
+        <h3 class="text-center mb-4">Or Browse by Workout</h3>
+        <!-- Accordion for Workouts (This part stays the same) -->
+        <div id="workoutAccordion">
+            {% for workout in all_workouts %}
+            <div class="card mb-2">
+                <div class="card-header" id="heading-{{ workout.id }}">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-{{ workout.id }}" aria-expanded="false" aria-controls="collapse-{{ workout.id }}">
+                            {{ workout.name }}
+                        </button>
+                    </h5>
+                </div>
+
+                <div id="collapse-{{ workout.id }}" class="collapse" aria-labelledby="heading-{{ workout.id }}" data-parent="#workoutAccordion">
+                    <div class="card-body">
+                        {% set potential_partners = users_by_workout.get(workout.id) %}
+                        {% if potential_partners %}
+                            <ul class="list-group">
+                                {% for partner in potential_partners %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>
+                                        <a href="{{ url_for('views.profile', user_id=partner.id) }}">{{ partner.first_name }}</a>
+                                    </span>
+                                    {% if not user.partner %}
+                                    <form action="{{ url_for('views.add_partner', partner_id=partner.id) }}" method="POST" style="display: inline;">
+                                        <button type="submit" class="btn btn-sm btn-success">Add as Partner</button>
+                                    </form>
+                                    {% endif %}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted">No available partners for this workout right now. Check back later!</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

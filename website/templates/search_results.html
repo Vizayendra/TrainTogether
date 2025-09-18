@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 align="center">Search Results for: "{{ query }}"</h1>
+    <hr>
+
+    {% if users_found %}
+        <div class="list-group">
+        {% for found_user in users_found %}
+            <div class="list-group-item list-group-item-action flex-column align-items-start mb-2">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">{{ found_user.first_name }}</h5>
+                    <a href="{{ url_for('views.profile', user_id=found_user.id) }}" class="btn btn-sm btn-primary">View Profile</a>
+                </div>
+                <p class="mb-1">
+                    Workouts: 
+                    {% for workout in found_user.workouts %}
+                        <span class="badge badge-info">{{ workout.name }}</span>
+                    {% endfor %}
+                </p>
+            </div>
+        {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-center text-muted">No users found matching your search.</p>
+    {% endif %}
+</div>
+{% endblock %}
