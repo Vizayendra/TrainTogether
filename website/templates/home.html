@@ -2,7 +2,6 @@
 {% block content %}
 <div align="center" style="margin-top: 50px;">
     <h1 align="center">Welcome to TrainTogether! 💪</h1>
-    <p>Edit profile</p>
 
     <br>
 
@@ -10,6 +9,10 @@
     <!-- User is logged in → show Profile button -->
     <a href="{{ url_for('views.profile') }}">
         <button class="btn btn-info btn-lg">Profile</button>
+    </a>
+    <!-- Activity button -->
+    <a href="{{ url_for('views.activity') }}">
+        <button class="btn btn-warning btn-lg">Activity</button>
     </a>
 {% else %}
     <!-- User is not logged in → show Sign Up and Login -->

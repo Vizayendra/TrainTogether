@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, flash, jsonify, redirect, url_for
 from flask_login import login_required, current_user
 from . import db
+from .models import User
 
 views = Blueprint('views', __name__)
 
@@ -42,3 +43,12 @@ def profile():
         return redirect("/profile")
 
     return render_template("profile.html", user=current_user)
+
+# Activity page
+@views.route('/activity')
+@login_required  
+def activity():
+    users = User.query.all()
+    return render_template("activity.html", users=users)
+
+

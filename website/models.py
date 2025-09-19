@@ -10,5 +10,7 @@ class User(db.Model, UserMixin):
     first_name = db.Column(db.String(150))
     bio = db.Column(db.String(500), default="Hello, I am new here!")
     phone_number = db.Column(db.String(11), nullable=True)
+    email = db.Column(db.String(150), unique=True)
     activity_types = db.Column(db.String(200), default="", nullable=True)
+
 

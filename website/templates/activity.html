@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Activity{% endblock %}
+
+{% block content %}
+<div align="center" style="margin-top: 50px;">
+    <h1>Activity Page 🏋</h1>
+    <p>Here you can see your activities!</p>
+
+     <br>
+
+    <!-- Table for activities -->
+    <table border="1" cellpadding="10" cellspacing="0">
+        <tr>
+            <th>Name</th>
+            <th>Email</th> 
+            <th>Phone Number</th>
+            <th>Activity Type</th>
+            <th>Upcoming Activities</th>
+        </thead>
+        <tbody>
+          {% for user in users %}
+          <tr>
+              <td>{{ user.first_name }}</td>
+              <td>{{ user.email }}</td> 
+              <td>{{ user.phone_number }}</td>
+              <td>
+                {% if user.activity_types %}
+                    <ul style="list-style-type: none; padding: 0; margin: 0;">
+                        {% for activity in user.activity_types.split(',') %}
+                            <li>✅ {{ activity }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    No activities yet
+                {% endif %}
+            </td>
+              <td>Coming soon...</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Add Activity Button at the bottom -->
+    <div style="text-align: center; margin-top: 20px;">
+        <button class="btn btn-success">Add Activity</button>
+    </div>
+</div>
+{% endblock %}
