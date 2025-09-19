@@ -5,11 +5,14 @@ from flask_login import UserMixin
 from sqlalchemy.sql import func
 
 
-class Note(db.Model):
+class Activity(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    data = db.Column(db.String(10000))
-    date = db.Column(db.DateTime(timezone=True), default=func.now())
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    activity_type = db.Column(db.String(100), nullable=False)   
+    date = db.Column(db.Date, nullable=False)                   
+    time = db.Column(db.Time, nullable=False)                   
+    location = db.Column(db.String(200), nullable=False)        
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id')) 
+
 
 
 class User(db.Model, UserMixin):
@@ -19,7 +22,6 @@ class User(db.Model, UserMixin):
     first_name = db.Column(db.String(150))
 
     # relationships
-    notes = db.relationship('Note', backref='user', lazy=True)
     sent_messages = db.relationship('Message', foreign_keys='Message.sender_id', backref='sender', lazy=True)
     received_messages = db.relationship('Message', foreign_keys='Message.receiver_id', backref='receiver', lazy=True)
 

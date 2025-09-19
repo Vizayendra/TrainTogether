@@ -2,10 +2,11 @@ print("==> views.py: Loaded")
 
 from flask import Blueprint, render_template, request, flash, jsonify, redirect, url_for
 from flask_login import login_required, current_user
-from .models import Note, Message, User
-from .forms import MessageForm
+from .models import Message, User, Activity
+from .forms import MessageForm, ActivityForm   # ✅ include ActivityForm
 from . import db
 import json
+
 
 views = Blueprint('views', __name__)
 
@@ -13,33 +14,7 @@ views = Blueprint('views', __name__)
 @views.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
-    if request.method == 'POST':
-        note = request.form.get('note')
-
-        if not note or len(note.strip()) < 1:
-            flash('Note is too short!', category='error')
-        else:
-            new_note = Note(data=note.strip(), user_id=current_user.id)
-            db.session.add(new_note)
-            db.session.commit()
-            flash('Note added!', category='success')
-
     return render_template("home.html", user=current_user)
-
-# ------------------ Delete Note ------------------ #
-@views.route('/delete-note', methods=['POST'])
-@login_required
-def delete_note():
-    note_data = json.loads(request.data)
-    note_id = note_data.get('noteId')
-    note = Note.query.get(note_id)
-
-    if note and note.user_id == current_user.id:
-        db.session.delete(note)
-        db.session.commit()
-        return jsonify({"success": True})
-
-    return jsonify({"success": False, "error": "Unauthorized or note not found"})
 
 # ------------------ Contact Form ------------------ #
 @views.route('/messages', methods=['GET', 'POST'])
@@ -65,3 +40,24 @@ def messages():
     sent = Message.query.filter_by(sender_id=current_user.id).order_by(Message.timestamp.desc()).all()
 
     return render_template('messages.html', form=form, inbox=inbox, sent=sent)
+ 
+@views.route('/activities', methods=['GET', 'POST'])
+@login_required
+def activities():
+    form = ActivityForm()
+    if form.validate_on_submit():
+        new_activity = Activity(
+            activity_type=form.activity_type.data,
+            date=form.date.data,
+            time=form.time.data,
+            location=form.location.data,
+            user_id=current_user.id
+        )
+        db.session.add(new_activity)
+        db.session.commit()
+        flash('Activity added!', 'success')
+        return redirect(url_for('views.activities'))
+
+    # show all activities (newest first)
+    activities = Activity.query.order_by(Activity.date.desc(), Activity.time.desc()).all()
+    return render_template('activities.html', form=form, activities=activities, user=current_user)
