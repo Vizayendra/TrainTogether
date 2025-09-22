@@ -2,6 +2,8 @@ from flask import Blueprint, render_template, request, flash, jsonify, redirect,
 from flask_login import login_required, current_user
 from . import db
 from .models import User
+from .models import User, Activity
+
 
 views = Blueprint('views', __name__)
 
@@ -52,3 +54,8 @@ def activity():
     return render_template("activity.html", users=users)
 
 
+# Add Activity page (temporary placeholder)
+@views.route('/add-activity')
+@login_required
+def add_activity():
+    return "<h1>Add Activity Page (to be completed)</h1>"
