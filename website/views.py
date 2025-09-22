@@ -58,4 +58,4 @@ def activity():
 @views.route('/add-activity')
 @login_required
 def add_activity():
-    return "<h1>Add Activity Page (to be completed)</h1>"
+    return "<h1>Add Activity Page</h1>"
