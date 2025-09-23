@@ -3,7 +3,7 @@
 
 {% block content %}
 <div align="center" style="margin-top: 50px;">
-    <h1>Activity Page 🏋</h1>
+    <h1>Activity Page🏋</h1>
     <p>Here you can see your activities!</p>
 
     <br>
@@ -40,7 +40,12 @@
                 {% if user.activities %}
                     <ul style="list-style-type: none; padding: 0; margin: 0;">
                         {% for act in user.activities %}
-                            <li>{{ act.activity_type }} on {{ act.datestrftime('%-d/%-m/%Y') }} at {{ act.time }} ({{ act.location }})</li>
+                            <li style="margin-bottom:10px;">
+                                <div>Activity: {{ act.activity_type }}</div>
+                                <div>Date: {{ act.date.strftime('%d/%m/%Y') }}</div>
+                                <div>Time: {{ act.time.strftime('%I:%M %p')|lower }}</div>
+                                <div>Location: {{ act.location }}</div>
+                            </li>
                         {% endfor %}
                     </ul>
                 {% else %}
