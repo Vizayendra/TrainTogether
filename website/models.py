@@ -1,6 +1,7 @@
 from . import db
 from flask_login import UserMixin
 from sqlalchemy.sql import func
+from datetime import date, time
 
 
 class User(db.Model, UserMixin):
@@ -34,6 +35,9 @@ class Activity(db.Model):
     email = db.Column(db.String(150))
     phone_number = db.Column(db.String(11))
     activity_type = db.Column(db.String(50))
+    date = db.Column(db.Date, nullable=False)        
+    time = db.Column(db.Time, nullable=False)        
+    location = db.Column(db.String(150), nullable=False)  
     upcoming = db.Column(db.String(200), default="Coming soon...")
 
     # Foreign key to User

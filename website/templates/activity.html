@@ -6,12 +6,7 @@
     <h1>Activity Page 🏋</h1>
     <p>Here you can see your activities!</p>
 
-     <br>
-
-     <!-- Add Activity Button -->
-    <a href="{{ url_for('views.add_activity_page') }}">
-        <button class="btn btn-primary">Add Activity</button>
-    </a>
+    <br>
 
     <!-- Table for activities -->
     <table border="1" cellpadding="10" cellspacing="0">
@@ -22,6 +17,7 @@
             <th>Phone Number</th>
             <th>Activity Type</th>
             <th>Upcoming Activities</th>
+        </tr>
         </thead>
         <tbody>
           {% for user in users %}
@@ -39,49 +35,27 @@
                 {% else %}
                     No activities yet
                 {% endif %}
-            </td>
-              <td>Coming soon...</td>
+              </td>
+              <td>
+                {% if user.activities %}
+                    <ul style="list-style-type: none; padding: 0; margin: 0;">
+                        {% for act in user.activities %}
+                            <li>{{ act.activity_type }} on {{ act.datestrftime('%-d/%-m/%Y') }} at {{ act.time }} ({{ act.location }})</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    No upcoming activities
+                {% endif %}
+              </td>
           </tr>
           {% endfor %}
         </tbody>
     </table>
 
-<!-- Add Activity Form -->
-<form method="POST" action="{{ url_for('views.add_activity_page') }}">
-    {{ form.hidden_tag() }}
-    <div class="form-group">
-        {{ form.activity_type.label }}
-        {{ form.activity_type(class="form-control") }}
-    </div>
-    <div class="form-group">
-        {{ form.date.label }}
-        {{ form.date(class="form-control") }}
-    </div>
-    <div class="form-group">
-        {{ form.time.label }}
-        {{ form.time(class="form-control") }}
-    </div>
-    <div class="form-group">
-        {{ form.location.label }}
-        {{ form.location(class="form-control") }}
-    </div>
     <br>
-    {{ form.submit(class="btn btn-primary") }}
-</form>
-
-<hr>
-
-<!-- Show Activities -->
-<h2>All Activities</h2>
-<ul class="list-group">
-    {% for act in activities %}
-    <li class="list-group-item">
-        <strong>{{ act.activity_type }}</strong>  
-        on {{ act.date }} at {{ act.time }}  
-        ({{ act.location }})  
-        — posted by {{ act.owner.email }}
-    </li>
-    {% endfor %}
-    </ul>
+    <!-- Add Activity Button at the bottom -->
+    <a href="{{ url_for('views.add_activity_page') }}">
+        <button class="btn btn-primary">Add Activity</button>
+    </a>
 </div>
 {% endblock %}
