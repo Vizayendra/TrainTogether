@@ -77,9 +77,9 @@ def activity_page():
 # Add activity 
 @views.route('/add-activities', methods=['GET','POST'])
 @login_required
-def add_activity():
+def add_activity_page():
     form = ActivityForm()
-    if form.validate_on_submit():
+    if form.validate_on_submit():  # Only runs when user clicks Submit
         new_activity = Activity(
             activity_type=form.activity_type.data,
             date=form.date.data,
@@ -90,8 +90,6 @@ def add_activity():
         db.session.add(new_activity)
         db.session.commit()
         flash('Activity added!', 'success')
-    else:
-        flash('Failed to add activity. Please check your input.', 'error')
-
-    # After adding, redirect back to the activity page
-    return redirect(url_for('views.activity_page'))
+        return redirect(url_for('views.activity_page'))  # Go back to main activity page
+    # If GET request or form fails, just show the form again
+    return render_template('add_activity.html', form=form)

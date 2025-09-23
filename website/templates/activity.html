@@ -10,7 +10,7 @@
 
      <!-- Add Activity Button -->
     <a href="{{ url_for('views.add_activity_page') }}">
-    <button class="btn btn-primary">Add Activity</button>
+        <button class="btn btn-primary">Add Activity</button>
     </a>
 
     <!-- Table for activities -->
@@ -47,7 +47,7 @@
     </table>
 
 <!-- Add Activity Form -->
-<form method="POST" action="{{ url_for('views.add_activity') }}">
+<form method="POST" action="{{ url_for('views.add_activity_page') }}">
     {{ form.hidden_tag() }}
     <div class="form-group">
         {{ form.activity_type.label }}
