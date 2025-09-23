@@ -1,8 +1,10 @@
 from flask import Blueprint, render_template, request, flash, jsonify, redirect, url_for
 from flask_login import login_required, current_user
+from .forms import MessageForm
+
 from . import db
 from .models import User
-from .models import User, Activity
+from .models import User, Activity, Message
 
 
 views = Blueprint('views', __name__)
@@ -45,6 +47,31 @@ def profile():
         return redirect("/profile")
 
     return render_template("profile.html", user=current_user)
+
+# Messages page
+@views.route('/messages', methods=['GET', 'POST'])
+@login_required
+def messages():
+    form = MessageForm()
+    # Fill dropdown with all users except yourself
+    form.receiver.choices = [(u.id, u.email) for u in User.query.order_by(User.email).all() if u.id != current_user.id]
+
+    if form.validate_on_submit():
+        msg = Message(
+            content=form.content.data,
+            sender_id=current_user.id,
+            receiver_id=form.receiver.data
+        )
+        db.session.add(msg)
+        db.session.commit()
+        flash('Message sent!', 'success')
+        return redirect(url_for('views.messages'))
+
+    # show messages for the logged-in user
+    inbox = Message.query.filter_by(receiver_id=current_user.id).order_by(Message.timestamp.desc()).all()
+    sent = Message.query.filter_by(sender_id=current_user.id).order_by(Message.timestamp.desc()).all()
+
+    return render_template('messages.html', form=form, inbox=inbox, sent=sent)
 
 # Activity page
 @views.route('/activity')
