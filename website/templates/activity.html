@@ -36,22 +36,23 @@
                     No activities yet
                 {% endif %}
               </td>
-              <td>
+             <td>
                 {% if user.activities %}
-                    <ul style="list-style-type: none; padding: 0; margin: 0;">
+                    <ul>
                         {% for act in user.activities %}
-                            <li style="margin-bottom:10px;">
-                                <div>Activity: {{ act.activity_type }}</div>
-                                <div>Date: {{ act.date.strftime('%d/%m/%Y') }}</div>
-                                <div>Time: {{ act.time.strftime('%I:%M %p')|lower }}</div>
-                                <div>Location: {{ act.location }}</div>
-                            </li>
+                        <li>
+                            <strong>Activity:</strong> {{ act.activity_type }}<br>
+                            <strong>Date:</strong> {{ act.date.strftime('%d/%m/%Y') }}<br>
+                            <strong>Time:</strong> {{ act.time.strftime('%I:%M %p') }}<br>
+                            <strong>Location:</strong> {{ act.location }}
+                        </li>
                         {% endfor %}
                     </ul>
                 {% else %}
                     No upcoming activities
                 {% endif %}
-              </td>
+            </td>
+
           </tr>
           {% endfor %}
         </tbody>
