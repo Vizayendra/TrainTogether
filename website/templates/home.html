@@ -11,8 +11,12 @@
         <button class="btn btn-info btn-lg">Profile</button>
     </a>
     <!-- Activity button -->
-    <a href="{{ url_for('views.activity') }}">
+    <a href="{{ url_for('views.activity_page') }}">
         <button class="btn btn-warning btn-lg">Activity</button>
+    </a>
+    <!-- Messages button -->
+    <a href="{{ url_for('views.messages') }}">
+        <button class="btn btn-primary btn-lg">Messages</button>
     </a>
 {% else %}
     <!-- User is not logged in → show Sign Up and Login -->

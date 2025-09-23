@@ -1,11 +1,8 @@
-from flask import Blueprint, render_template, request, flash, jsonify, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
-from .forms import MessageForm
-
+from .forms import MessageForm, ActivityForm
 from . import db
-from .models import User
 from .models import User, Activity, Message
-
 
 views = Blueprint('views', __name__)
 
@@ -13,10 +10,8 @@ views = Blueprint('views', __name__)
 @views.route('/')
 def landing():
     if current_user.is_authenticated:
-        # If user is already logged in, go to home page
         return render_template('home.html', user=current_user)
     else:
-        # If not, show landing page
         return render_template("landing.html")
 
 # Home page
@@ -34,7 +29,6 @@ def profile():
         phone_number = request.form.get("phone_number")
         activities = request.form.getlist('activities') 
 
-        # limited to 3 activities
         if len(activities) > 3:
             flash("You can only select up to 3 activities.", category="error")
             return render_template("profile.html", user=current_user)
@@ -53,7 +47,6 @@ def profile():
 @login_required
 def messages():
     form = MessageForm()
-    # Fill dropdown with all users except yourself
     form.receiver.choices = [(u.id, u.email) for u in User.query.order_by(User.email).all() if u.id != current_user.id]
 
     if form.validate_on_submit():
@@ -67,22 +60,38 @@ def messages():
         flash('Message sent!', 'success')
         return redirect(url_for('views.messages'))
 
-    # show messages for the logged-in user
     inbox = Message.query.filter_by(receiver_id=current_user.id).order_by(Message.timestamp.desc()).all()
     sent = Message.query.filter_by(sender_id=current_user.id).order_by(Message.timestamp.desc()).all()
 
     return render_template('messages.html', form=form, inbox=inbox, sent=sent)
 
-# Activity page
+# Activity table
 @views.route('/activity')
 @login_required  
-def activity():
+def activity_page():
     users = User.query.all()
-    return render_template("activity.html", users=users)
+    activities = Activity.query.all()
+    form = ActivityForm()
+    return render_template("activity.html", users=users, activities=activities, form=form)
 
-
-# Add Activity page (temporary placeholder)
-@views.route('/add-activity')
+# Add activity 
+@views.route('/add-activities', methods=['GET','POST'])
 @login_required
 def add_activity():
-    return "<h1>Add Activity Page</h1>"
+    form = ActivityForm()
+    if form.validate_on_submit():
+        new_activity = Activity(
+            activity_type=form.activity_type.data,
+            date=form.date.data,
+            time=form.time.data,
+            location=form.location.data,
+            user_id=current_user.id
+        )
+        db.session.add(new_activity)
+        db.session.commit()
+        flash('Activity added!', 'success')
+    else:
+        flash('Failed to add activity. Please check your input.', 'error')
+
+    # After adding, redirect back to the activity page
+    return redirect(url_for('views.activity_page'))
