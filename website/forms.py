@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import TextAreaField, SelectField, SubmitField, StringField, DateField, TimeField
 from wtforms.validators import DataRequired
 
+
 class MessageForm(FlaskForm):
     receiver = SelectField('Send To', coerce=int, validators=[DataRequired()])
     content = TextAreaField('Message', validators=[DataRequired()])
@@ -10,20 +11,16 @@ class MessageForm(FlaskForm):
 
 class ActivityForm(FlaskForm):
     activity_type = SelectField(
-        'Choose Activity',
+        'Activity Type',
         choices=[
-            ('swimming','Swimming'), 
-            ('jogging','Jogging'), 
-            ('hiking','Hiking'), 
-            ('cycling','Cycling'),
-            ('yoga','Yoga'), 
-            ('badminton','Badminton'), 
-            ('tennis','Tennis'), 
-            ('football','Football'), 
-            ('basketball','Basketball'), 
-            ('squash','Squash')
+            ('', '-- Select an activity --'),
+            ('running', 'Running'),
+            ('swimming', 'Swimming'),
+            ('yoga', 'Yoga'),
+            ('cycling', 'Cycling'),
+            ('gym', 'Gym Workout')
         ],
-        validators=[DataRequired()]
+        validators=[DataRequired(message="Please select an activity")]
     )
     date = DateField('Date', validators=[DataRequired()])
     time = TimeField('Time', validators=[DataRequired()])

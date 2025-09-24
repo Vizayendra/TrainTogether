@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+<h2 align="center">My Profile</h2>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}" role="alert">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<form method="POST">
+  <div class="form-group">
+    <label for="email">Email (cannot change)</label>
+    <input type="text" class="form-control" id="email" value="{{ user.email }}" readonly>
+  </div>
+
+  <div class="form-group">
+    <label for="firstName">First Name (cannot change)</label>
+    <input type="text" class="form-control" id="firstName" value="{{ user.first_name }}" readonly>
+  </div>
+
+  <div class="form-group">
+    <label for="bio">Bio</label>
+    <textarea class="form-control" id="bio" name="bio">{{ user.bio }}</textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="phone_number">Phone Number:</label>
+    <input 
+    type="text" 
+    name="phone_number" 
+    value="{{ current_user.phone_number }}" 
+    pattern="\d{10,11}" 
+    maxlength="11" 
+    title="Phone number must be exactly 10 or 11 digits" 
+    required>
+  </div>
+
+  <div class="form-group">
+  <label>Activity Type (pick up to 3):</label><br>
+  <input type="checkbox" name="activities" value="swimming" {% if user.activity_types and 'swimming' in user.activity_types %}checked{% endif %}> Swimming<br>
+  <input type="checkbox" name="activities" value="jogging" {% if user.activity_types and 'jogging' in user.activity_types %}checked{% endif %}> Jogging<br>
+  <input type="checkbox" name="activities" value="hiking" {% if user.activity_types and 'hiking' in user.activity_types %}checked{% endif %}> Hiking<br>
+  <input type="checkbox" name="activities" value="cycling" {% if user.activity_types and 'cycling' in user.activity_types %}checked{% endif %}> Cycling<br>
+  <input type="checkbox" name="activities" value="yoga" {% if user.activity_types and 'yoga' in user.activity_types %}checked{% endif %}> Yoga<br>
+  <input type="checkbox" name="activities" value="badminton" {% if user.activity_types and 'badminton' in user.activity_types %}checked{% endif %}> Badminton<br>
+  <input type="checkbox" name="activities" value="tennis" {% if user.activity_types and 'tennis' in user.activity_types %}checked{% endif %}> Tennis<br>
+  <input type="checkbox" name="activities" value="football" {% if user.activity_types and 'football' in user.activity_types %}checked{% endif %}> Football<br>
+  <input type="checkbox" name="activities" value="basketball" {% if user.activity_types and 'basketball' in user.activity_types %}checked{% endif %}> Basketball<br>
+  <input type="checkbox" name="activities" value="squash" {% if user.activity_types and 'squash' in user.activity_types %}checked{% endif %}> Squash<br>
+  </div>
+
+
+  <button type="submit" class="btn btn-purple">Update Profile</button>
+</form>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const checkboxes = document.querySelectorAll('input[name="activities"]');
+    checkboxes.forEach(cb => {
+      cb.addEventListener("change", function () {
+        const checked = document.querySelectorAll('input[name="activities"]:checked');
+        if (checked.length > 3) {
+          this.checked = false; // untick the last one
+          alert("⚠️ You can only select up to 3 activities.");
+        }
+      });
+    });
+  });
+</script>
+{% endblock %}

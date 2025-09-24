@@ -1,27 +1,54 @@
 print("==> views.py: Loaded")
 
-from flask import Blueprint, render_template, request, flash, jsonify, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
-from .models import Message, User, Activity
-from .forms import MessageForm, ActivityForm   # ✅ include ActivityForm
+from .forms import MessageForm, ActivityForm
 from . import db
-import json
-
+from .models import User, Activity, Message
 
 views = Blueprint('views', __name__)
 
-# ------------------ Home Route ------------------ #
-@views.route('/', methods=['GET', 'POST'])
+# Landing page 
+@views.route('/')
+def landing():
+    if current_user.is_authenticated:
+        return render_template('home.html', user=current_user)
+    else:
+        return render_template("landing.html")
+
+# Home page
+@views.route('/home')
 @login_required
 def home():
     return render_template("home.html", user=current_user)
 
-# ------------------ Contact Form ------------------ #
+# Profile page
+@views.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    if request.method == 'POST':
+        bio = request.form.get('bio')
+        phone_number = request.form.get("phone_number")
+        activities = request.form.getlist('activities') 
+
+        if len(activities) > 3:
+            flash("You can only select up to 3 activities.", category="error")
+            return render_template("profile.html", user=current_user)
+
+        current_user.bio = bio
+        current_user.phone_number = phone_number
+        current_user.activity_types = ",".join(activities)
+        db.session.commit()
+        flash('Profile updated!', category='success')
+        return redirect("/profile")
+
+    return render_template("profile.html", user=current_user)
+
+# Messages page
 @views.route('/messages', methods=['GET', 'POST'])
 @login_required
 def messages():
     form = MessageForm()
-    # Fill dropdown with all users except yourself
     form.receiver.choices = [(u.id, u.email) for u in User.query.order_by(User.email).all() if u.id != current_user.id]
 
     if form.validate_on_submit():
@@ -35,15 +62,24 @@ def messages():
         flash('Message sent!', 'success')
         return redirect(url_for('views.messages'))
 
-    # show messages for the logged-in user
     inbox = Message.query.filter_by(receiver_id=current_user.id).order_by(Message.timestamp.desc()).all()
     sent = Message.query.filter_by(sender_id=current_user.id).order_by(Message.timestamp.desc()).all()
 
     return render_template('messages.html', form=form, inbox=inbox, sent=sent)
- 
-@views.route('/activities', methods=['GET', 'POST'])
+
+# Activity table
+@views.route('/activity')
+@login_required  
+def activity_page():
+    users = User.query.all()
+    activities = Activity.query.all()
+    form = ActivityForm()
+    return render_template("activity.html", users=users, activities=activities, form=form)
+
+# Add activity 
+@views.route('/add-activity', methods=['GET','POST'])
 @login_required
-def activities():
+def add_activity_page():
     form = ActivityForm()
     if form.validate_on_submit():
         new_activity = Activity(
@@ -56,8 +92,6 @@ def activities():
         db.session.add(new_activity)
         db.session.commit()
         flash('Activity added!', 'success')
-        return redirect(url_for('views.activities'))
+        return redirect(url_for('views.activity_page'))
 
-    # show all activities (newest first)
-    activities = Activity.query.order_by(Activity.date.desc(), Activity.time.desc()).all()
-    return render_template('activities.html', form=form, activities=activities, user=current_user)
+    return render_template('add_activity.html', form=form)

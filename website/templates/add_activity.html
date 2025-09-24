@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Add Activity{% endblock %}
+
+{% block content %}
+<div align="center" style="margin-top: 50px;">
+    <h1>Add Activity 📝</h1>
+
+    <form method="POST">
+        {{ form.hidden_tag() }}
+
+        <div>
+            {{ form.activity_type.label }}<br>
+            {{ form.activity_type(class="form-select") }}
+        </div>
+        <br>
+
+        <div>
+            {{ form.date.label }}<br>
+            {{ form.date(class="form-control") }}
+        </div>
+        <br>
+
+        <div>
+            {{ form.time.label }}<br>
+            {{ form.time(class="form-control") }}
+        </div>
+        <br>
+
+        <div>
+            {{ form.location.label }}<br>
+            {{ form.location(class="form-control") }}
+        </div>
+        <br>
+
+        <button type="submit" class="btn btn-purple">{{ form.submit.label.text }}</button>
+    </form>
+</div>
+{% endblock %}
