@@ -8,7 +8,24 @@ class MessageForm(FlaskForm):
     submit = SubmitField('Send')
 
 class ActivityForm(FlaskForm):
-    activity_type = StringField('Activity Type', validators=[DataRequired()])
+    activity_type = SelectField(
+        'Activity Type',
+        choices=[
+            ('', '-- Select an activity --'),
+            ('swimming', 'Swimming'),
+            ('jogging', 'Jogging'),
+            ('hiking', 'Hiking'),
+            ('cycling', 'Cycling'),
+            ('yoga', 'Yoga'),
+            ('badminton', 'Badminton'),
+            ('tennis', 'Tennis'),
+            ('football', 'Football'),
+            ('basketball', 'Basketball'),
+            ('squash', 'Squash')
+        ],
+        validators=[DataRequired(message="Please select an activity")]
+    )
+
     date = DateField('Date', validators=[DataRequired()])
     time = TimeField('Time', validators=[DataRequired()])
     location = StringField('Location', validators=[DataRequired()])
