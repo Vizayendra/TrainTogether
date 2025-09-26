@@ -14,11 +14,16 @@ class ActivityForm(FlaskForm):
         'Activity Type',
         choices=[
             ('', '-- Select an activity --'),
-            ('running', 'Running'),
             ('swimming', 'Swimming'),
-            ('yoga', 'Yoga'),
+            ('jogging', 'Jogging'),
+            ('hiking', 'Hiking'),
             ('cycling', 'Cycling'),
-            ('gym', 'Gym Workout')
+            ('yoga', 'Yoga'),
+            ('badminton', 'Badminton'),
+            ('tennis', 'Tennis'),
+            ('football', 'Football'),
+            ('basketball', 'Basketball'),
+            ('squash', 'Squash')
         ],
         validators=[DataRequired(message="Please select an activity")]
     )
@@ -26,3 +31,4 @@ class ActivityForm(FlaskForm):
     time = TimeField('Time', validators=[DataRequired()])
     location = StringField('Location', validators=[DataRequired()])
     submit = SubmitField('Add Activity')
+
