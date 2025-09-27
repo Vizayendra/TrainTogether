@@ -22,27 +22,49 @@
 
 <hr>
 
-<!-- Inbox -->
-<h2>Inbox</h2>
-{% if inbox %}
-    <ul>
-    {% for msg in inbox %}
-        <li><strong>From:</strong> {{ msg.sender.email }} - {{ msg.content }} <small>{{ msg.timestamp }}</small></li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No messages yet.</p>
-{% endif %}
+<!-- Inbox and Sent -->
+<div class="mb-3" id="accordion">
+    <div class="card bg-dark text-white">
+        <div class="card-header">
+            <button class="btn btn-custom btn-block text-left" data-toggle="collapse" data-target="#inboxCollapse" aria-expanded="true" aria-controls="inboxCollapse">
+                Inbox
+            </button>
+        </div>
+        <div id="inboxCollapse" class="collapse show" data-parent="#accordion">
+            <div class="card-body">
+                {% if inbox %}
+                    <ul>
+                    {% for msg in inbox %}
+                        <li><strong>From:</strong> {{ msg.sender.email }} - {{ msg.content }} <small>{{ msg.timestamp }}</small></li>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No messages yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 
-<!-- Sent -->
-<h2>Sent</h2>
-{% if sent %}
-    <ul>
-    {% for msg in sent %}
-        <li><strong>To:</strong> {{ msg.receiver.email }} - {{ msg.content }} <small>{{ msg.timestamp }}</small></li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>You haven’t sent any messages yet.</p>
-{% endif %}
+    <div class="card bg-dark text-white mt-2">
+        <div class="card-header">
+            <button class="btn btn-custom btn-block text-left" data-toggle="collapse" data-target="#sentCollapse" aria-expanded="false" aria-controls="sentCollapse">
+                Sent
+            </button>
+        </div>
+        <div id="sentCollapse" class="collapse" data-parent="#accordion">
+            <div class="card-body">
+                {% if sent %}
+                    <ul>
+                    {% for msg in sent %}
+                        <li><strong>To:</strong> {{ msg.receiver.email }} - {{ msg.content }} <small>{{ msg.timestamp }}</small></li>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>You haven’t sent any messages yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
