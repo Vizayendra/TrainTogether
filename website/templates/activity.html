@@ -1,11 +1,36 @@
 {% extends "base.html" %}
-
-{% block title %}Activities{% endblock %}
+{% block title %}Activity{% endblock %}
 
 {% block content %}
 <div align="center" style="margin-top: 50px;">
-    <h1>Activity Page🏋</h1>
+    <h1>Activity Page</h1>
     <p>Here you can see your activities!</p>
+
+    <style>
+    table {
+        background-color: black; /* table background */
+        color: white;           /* text color */
+        border-collapse: collapse;
+        width: 100%;
+    }
+    th, td {
+        border: 1px solid white; /* white borders */
+        padding: 10px;
+        text-align: center;
+    }
+    th {
+        background-color: #333; /* dark gray for header */
+    }
+    tr:nth-child(even) {
+        background-color: black !important;
+        color: white !important;
+    }
+    tr:nth-child(odd) {
+        background-color: black !important;
+        color: white !important;
+    }
+    </style>
+
 
     <br>
 
@@ -53,6 +78,7 @@
                     No upcoming activities
                 {% endif %}
             </td>
+
           </tr>
           {% endfor %}
         </tbody>

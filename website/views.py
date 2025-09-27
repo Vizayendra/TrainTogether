@@ -46,6 +46,7 @@ def profile():
 
 # Messages page
 @views.route('/messages', methods=['GET', 'POST'])
+@views.route('/messages', methods=['GET', 'POST'])
 @login_required
 def messages():
     form = MessageForm()
@@ -62,10 +63,33 @@ def messages():
         flash('Message sent!', 'success')
         return redirect(url_for('views.messages'))
 
-    inbox = Message.query.filter_by(receiver_id=current_user.id).order_by(Message.timestamp.desc()).all()
-    sent = Message.query.filter_by(sender_id=current_user.id).order_by(Message.timestamp.desc()).all()
+    return render_template('messages.html', form=form, inbox=None, sent=None, user=current_user)
 
-    return render_template('messages.html', form=form, inbox=inbox, sent=sent)
+# Inbox page
+@views.route('/inbox')
+@login_required
+def inbox():
+    inbox_messages = Message.query.filter_by(receiver_id=current_user.id).order_by(Message.timestamp.desc()).all()
+    return render_template(
+        'messages.html',
+        form=None,
+        inbox=inbox_messages,
+        sent=None,
+        user=current_user
+    )
+
+# Sent page
+@views.route('/sent')
+@login_required
+def sent():
+    sent_messages = Message.query.filter_by(sender_id=current_user.id).order_by(Message.timestamp.desc()).all()
+    return render_template(
+        'messages.html',
+        form=None,
+        inbox=None,
+        sent=sent_messages,
+        user=current_user
+    )
 
 # Activity table
 @views.route('/activity')

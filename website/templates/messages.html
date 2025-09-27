@@ -2,9 +2,19 @@
 {% block title %}Messages{% endblock %}
 
 {% block content %}
+<div class="d-flex justify-content-center mb-4">
+    <div class="btn-group" role="group" aria-label="Message Navigation">
+        <a class="btn btn-success" href="/messages">✉️ Send</a>
+        <a class="btn btn-primary" href="/inbox">📥 Inbox</a>
+        <a class="btn btn-info" href="/sent">📤 Sent</a>
+    </div>
+</div>
+
 <h1>Messages</h1>
 
+{% if form %}
 <!-- Send Message Form -->
+<h2>Send a Message</h2>
 <form method="POST">
     {{ form.hidden_tag() }}
     <div>
@@ -13,36 +23,12 @@
     </div>
     <div style="margin-top:10px;">
         {{ form.content.label }}<br>
-        {{ form.content(class="form-control", rows="3") }}
+        {{ form.content(class="form-control") }}
     </div>
     <div style="margin-top:10px;">
-        {{ form.submit(class="btn btn-purple") }}
+        {{ form.submit(class="btn btn-success") }}
     </div>
 </form>
-
-<hr>
-
-<!-- Inbox -->
-<h2>Inbox</h2>
-{% if inbox %}
-    <ul>
-    {% for msg in inbox %}
-        <li><strong>From:</strong> {{ msg.sender.email }} - {{ msg.content }} <small>{{ msg.timestamp }}</small></li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No messages yet.</p>
-{% endif %}
-
-<!-- Sent -->
-<h2>Sent</h2>
-{% if sent %}
-    <ul>
-    {% for msg in sent %}
-        <li><strong>To:</strong> {{ msg.receiver.email }} - {{ msg.content }} <small>{{ msg.timestamp }}</small></li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>You haven’t sent any messages yet.</p>
 {% endif %}
 {% endblock %}
+
