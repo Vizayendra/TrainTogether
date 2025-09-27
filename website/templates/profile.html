@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user_profile.first_name }}'s Profile{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="section">
+        <h2 align="center">{{ user_profile.first_name }}'s Profile</h2>
+        <p><strong>Email:</strong> {{ user_profile.email }}</p>
+        
+        <h4 class="mt-4">My Workouts</h4>
+        {% if user_profile.workouts.all() %}
+            {% for workout in user_profile.workouts %}
+                <span class="badge badge-success" style="font-size: 1rem; margin: 0.2rem;">{{ workout.name }}</span>
+            {% endfor %}
+        {% else %}
+            <p class="text-muted">No workouts added yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- Display Workout Partner -->
+    <div class="section">
+        <h4>My Workout Partner</h4>
+        {% if user_profile.partner %}
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>{{ user_profile.partner.first_name }}</strong>
+                    <a href="{{ url_for('views.profile', user_id=user_profile.partner.id) }}" class="btn btn-sm btn-info ml-2">View Profile</a>
+                </div>
+                {% if user_profile.id == user.id %}
+                <form action="{{ url_for('views.remove_partner') }}" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-sm btn-danger">Remove Partner</button>
+                </form>
+                {% endif %}
+            </div>
+        {% else %}
+            <p>No workout partner assigned.</p>
+        {% endif %}
+    </div>
+
+    <!-- Display Suggested Partners (only on the logged-in user's own profile) -->
+    {% if user_profile.id == user.id and suggested_partners %}
+    <div class="section">
+        <h4>Suggested Workout Partners</h4>
+        <div class="list-group">
+            {% for partner in suggested_partners %}
+            <div class="list-group-item list-group-item-action flex-column align-items-start mb-2">
+                <div class="d-flex w-100 justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-1">{{ partner.first_name }}</h5>
+                        <small>
+                            Shared Workouts:
+                            {% for p_workout in partner.workouts %}
+                                {% if p_workout in user.workouts %}
+                                    <span class="badge badge-primary">{{ p_workout.name }}</span>
+                                {% endif %}
+                            {% endfor %}
+                        </small>
+                    </div>
+                    <div>
+                        <a href="{{ url_for('views.profile', user_id=partner.id) }}" class="btn btn-sm btn-info">View</a>
+                        <!-- Add Partner Button (only show if user has no partner) -->
+                        {% if not user.partner %}
+                        <form action="{{ url_for('views.add_partner', partner_id=partner.id) }}" method="POST" style="display: inline;">
+                            <button type="submit" class="btn btn-sm btn-success">Add Partner</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

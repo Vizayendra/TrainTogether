@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Select Workouts{% endblock %}
+{% block content %}
+<div class="workout-container">
+    <h1>Select Your Workout Plan</h1>
+
+    <form method="POST">
+        <label for="workout_id">Choose a workout:</label>
+        <select name="workout_id" required>
+            {% for w in workouts %}
+                <option value="{{ w.id }}">{{ w.name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn">Add Workout</button>
+    </form>
+
+    <h2>Your Current Workouts:</h2>
+    {% if user.workouts.count() > 0 %}
+        <ul>
+        {% for w in user.workouts %}
+            <li>{{ w.name }}</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No workouts selected yet.</p>
+    {% endif %}
+</div>
+
+{% endblock %}
