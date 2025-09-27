@@ -1,5 +1,3 @@
-print("==> views.py: Loaded")
-
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
 from .forms import MessageForm, ActivityForm
@@ -46,7 +44,6 @@ def profile():
 
 # Messages page
 @views.route('/messages', methods=['GET', 'POST'])
-@views.route('/messages', methods=['GET', 'POST'])
 @login_required
 def messages():
     form = MessageForm()
@@ -63,33 +60,10 @@ def messages():
         flash('Message sent!', 'success')
         return redirect(url_for('views.messages'))
 
-    return render_template('messages.html', form=form, inbox=None, sent=None, user=current_user)
+    inbox = Message.query.filter_by(receiver_id=current_user.id).order_by(Message.timestamp.desc()).all()
+    sent = Message.query.filter_by(sender_id=current_user.id).order_by(Message.timestamp.desc()).all()
 
-# Inbox page
-@views.route('/inbox')
-@login_required
-def inbox():
-    inbox_messages = Message.query.filter_by(receiver_id=current_user.id).order_by(Message.timestamp.desc()).all()
-    return render_template(
-        'messages.html',
-        form=None,
-        inbox=inbox_messages,
-        sent=None,
-        user=current_user
-    )
-
-# Sent page
-@views.route('/sent')
-@login_required
-def sent():
-    sent_messages = Message.query.filter_by(sender_id=current_user.id).order_by(Message.timestamp.desc()).all()
-    return render_template(
-        'messages.html',
-        form=None,
-        inbox=None,
-        sent=sent_messages,
-        user=current_user
-    )
+    return render_template('messages.html', form=form, inbox=inbox, sent=sent)
 
 # Activity table
 @views.route('/activity')
@@ -101,11 +75,11 @@ def activity_page():
     return render_template("activity.html", users=users, activities=activities, form=form)
 
 # Add activity 
-@views.route('/add-activity', methods=['GET','POST'])
+@views.route('/add-activities', methods=['GET','POST'])
 @login_required
 def add_activity_page():
     form = ActivityForm()
-    if form.validate_on_submit():
+    if form.validate_on_submit():  # Only runs when user clicks Submit
         new_activity = Activity(
             activity_type=form.activity_type.data,
             date=form.date.data,
@@ -116,6 +90,6 @@ def add_activity_page():
         db.session.add(new_activity)
         db.session.commit()
         flash('Activity added!', 'success')
-        return redirect(url_for('views.activity_page'))
-
+        return redirect(url_for('views.activity_page'))  # Go back to main activity page
+    # If GET request or form fails, just show the form again
     return render_template('add_activity.html', form=form)

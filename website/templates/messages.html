@@ -2,19 +2,9 @@
 {% block title %}Messages{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-center mb-4">
-    <div class="btn-group" role="group" aria-label="Message Navigation">
-        <a class="btn btn-success" href="/messages">✉️ Send</a>
-        <a class="btn btn-primary" href="/inbox">📥 Inbox</a>
-        <a class="btn btn-info" href="/sent">📤 Sent</a>
-    </div>
-</div>
-
 <h1>Messages</h1>
 
-{% if form %}
 <!-- Send Message Form -->
-<h2>Send a Message</h2>
 <form method="POST">
     {{ form.hidden_tag() }}
     <div>
@@ -23,12 +13,58 @@
     </div>
     <div style="margin-top:10px;">
         {{ form.content.label }}<br>
-        {{ form.content(class="form-control") }}
+        {{ form.content(class="form-control", rows="3") }}
     </div>
     <div style="margin-top:10px;">
-        {{ form.submit(class="btn btn-success") }}
+        {{ form.submit(class="btn btn-purple") }}
     </div>
 </form>
-{% endif %}
-{% endblock %}
 
+<hr>
+
+<!-- Buttons to toggle Inbox and Sent (only one open at a time) -->
+<div class="mb-3" id="accordion">
+    <div class="card bg-dark text-white">
+        <div class="card-header">
+            <button class="btn btn-custom btn-block text-left" data-toggle="collapse" data-target="#inboxCollapse" aria-expanded="true" aria-controls="inboxCollapse">
+                Inbox
+            </button>
+        </div>
+        <div id="inboxCollapse" class="collapse show" data-parent="#accordion">
+            <div class="card-body">
+                {% if inbox %}
+                    <ul>
+                    {% for msg in inbox %}
+                        <li><strong>From:</strong> {{ msg.sender.email }} - {{ msg.content }} <small>{{ msg.timestamp }}</small></li>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No messages yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="card bg-dark text-white mt-2">
+        <div class="card-header">
+            <button class="btn btn-purple btn-block text-left" data-toggle="collapse" data-target="#sentCollapse" aria-expanded="false" aria-controls="sentCollapse">
+                Sent
+            </button>
+        </div>
+        <div id="sentCollapse" class="collapse" data-parent="#accordion">
+            <div class="card-body">
+                {% if sent %}
+                    <ul>
+                    {% for msg in sent %}
+                        <li><strong>To:</strong> {{ msg.receiver.email }} - {{ msg.content }} <small>{{ msg.timestamp }}</small></li>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>You haven’t sent any messages yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
